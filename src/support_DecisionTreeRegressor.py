@@ -99,3 +99,32 @@ def loo_cross_validation_rmse(model, X, y):
 
     # Calcular y retornar el RMSE promedio
     return np.mean(scores)
+
+
+def rmse_plot(df, mse_column, columns, figure_size=(16, 10)):
+    """
+    Función sencilla para calcular y graficar el RMSE agrupado por columnas específicas.
+
+    Parámetros:
+    - df: DataFrame que contiene los datos.
+    - mse_column: Columna que contiene los valores de MSE.
+    - columns: Lista de columnas para calcular y graficar el RMSE.
+    - figure_size: Tamaño de la figura (ancho, alto) en tuplas.
+    """
+    num_columns = len(columns)
+    fig, axes = plt.subplots(1, num_columns, figsize=figure_size, sharey=True)
+
+    if num_columns == 1:  # Ajustar para un solo gráfico
+        axes = [axes]
+
+    for ax, column in zip(axes, columns):
+        # Calcular RMSE agrupado
+        rmse = np.sqrt(df.groupby(column)[mse_column].mean().abs())
+
+        # Graficar
+        sns.lineplot(x=rmse.index, y=rmse.values, ax=ax)
+        ax.set_title(f"RMSE por {column}")
+        ax.grid()
+
+    plt.tight_layout()
+    plt.show()
